@@ -1,27 +1,14 @@
-<script>
-export default {
-  name: "activities-component",
-  data() {
-    return {
-      activities: [],
-    };
-  },
-  async mounted() {
-    const response = await fetch('http://localhost:8080/activities', {
-      method: "GET",
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    this.activities = await response.json();
-  }
-}
-</script>
-
 <template>
-  <div class="activities__container">
-    {{activities}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div v-if="!activities.length" class="col-span-full text-center">Loading...</div>
+    <div v-for="activity in activities" :key="activity.id"
+         class="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-300">
+      <h2 class="text-xl font-semibold mb-2">{{ activity.title }}</h2>
+      <p class="text-gray-700 mb-1">Price: {{ activity.currency }}{{ activity.price }}</p>
+      <p class="text-gray-700 mb-1">Rating: {{ activity.rating }}</p>
+      <p class="text-gray-700 mb-1">Special offer: {{ activity.specialOffer ? "Yes" : "No" }}</p>
+      <p class="text-gray-700 mb-1">Supplier: {{ activity.supplierId }} </p>
+    </div>
   </div>
 </template>
 
@@ -66,3 +53,18 @@ export default {
   }
 }
 </style>
+
+<script>
+export default {
+  name: "activities-component",
+  props: {
+    activities: {
+      type: Array,
+      required: true
+    }
+  },
+  mounted() {
+    console.log(this.activities);
+  }
+}
+</script>
