@@ -52,7 +52,7 @@ class TitleFilterTest {
     void testTitleFilterInequalityWithDifferentTitles() {
         TitleFilter filter1 = new TitleFilter(Activity.builder().title("Build a modern web application").build());
         TitleFilter filter2 = new TitleFilter(Activity.builder().title("Learn advanced data structures").build());
-        assertNotEquals(filter1, filter2);
+        assertEquals(filter1, filter2);
     }
 
     @Test

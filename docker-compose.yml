@@ -6,3 +6,9 @@ services:
       context: vue-frontend
     ports:
       - "8081:8080"
+
+  backend:
+    build:
+      context: spring-boot-service
+    ports:
+      - "8080:8080"

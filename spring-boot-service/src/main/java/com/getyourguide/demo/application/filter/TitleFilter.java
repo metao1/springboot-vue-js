@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
 
 @Getter
 @Value
@@ -22,6 +23,9 @@ public class TitleFilter extends Filter<Activity> {
     @Override
     public boolean matches(@NonNull Activity activity) {
         //remove all spaces special characters characters
+        if (!StringUtils.hasText(super.getValue().getTitle()) || !StringUtils.hasText(getValue().getTitle())) {
+            return false;
+        }
         return activity.getTitle().trim().replaceAll("[^a-zA-Z0-9]", "").toLowerCase()
                 .contains(super.getValue().getTitle().trim().replaceAll("[^a-zA-Z0-9]", "").toLowerCase());
 
