@@ -3,7 +3,6 @@ package com.getyourguide.demo.domain.service;
 import com.getyourguide.demo.application.filter.TitleFilter;
 import com.getyourguide.demo.domain.Activity;
 import com.getyourguide.demo.infrastructure.repository.ActivityRepository;
-import com.getyourguide.demo.domain.filter.ActivityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,12 +15,16 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
 
-    public List<Activity> getActivities(String title) {
-        ActivityFilter filter = new ActivityFilter();
-        final Activity activity = new Activity();
-        activity.setTitle(title);
+    public List<Activity> getActivitiesByTitle(String title) {
+        if (!StringUtils.hasText(title) || title.equals("NONE")) {
+            return activityRepository.findAllActivities();
+        }
+        // create a list of filters
+        final Activity activity = Activity.builder()
+                .title(title)
+                .build();
         final var titleFilter = new TitleFilter(activity);
-        if (StringUtils.hasText(title)) filter.addCriterion("title", titleFilter);
-        return activityRepository.findBySpecification(filter);
+
+        return activityRepository.findByFilter(titleFilter).stream().toList();
     }
 }

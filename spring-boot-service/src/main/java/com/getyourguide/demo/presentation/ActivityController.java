@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,9 +20,9 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping("/debug")
-    public void debug(@RequestParam(name = "title", required = false, defaultValue = "NONE") String title, Model model) throws IOException {
+    public void debug(@RequestParam(name = "title", required = false, defaultValue = "NONE") String title, Model model) {
         model.addAttribute("title", title);
-        var activities = activityService.getActivities(title);
+        var activities = activityService.getActivitiesByTitle(title);
         model.addAttribute("activities", activities);
     }
 
@@ -34,13 +33,11 @@ public class ActivityController {
      *              matching this string will be returned.
      *              Otherwise, all activities will be returned.
      * @return A JSON response containing the results of the query.
-     * @throws IOException If there is an error connecting to the database.
      */
     @GetMapping("/activities")
     public ResponseEntity<List<Activity>> activities(
-            @RequestParam(name = "title", required = false, defaultValue = "NONE") String title) throws IOException {
-        final List<Activity> activities;
-        activities = activityService.getActivities(title);
+            @RequestParam(name = "title", required = false, defaultValue = "NONE") String title) {
+        final List<Activity> activities = activityService.getActivitiesByTitle(title);
         return ResponseEntity.ok(activities);
     }
 }

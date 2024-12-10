@@ -1,19 +1,17 @@
 package com.getyourguide.demo.infrastructure.config;
 
 import com.getyourguide.demo.infrastructure.repository.ActivityRepository;
-import com.getyourguide.demo.infrastructure.repository.DatabaseActivityRepository;
-import com.getyourguide.demo.infrastructure.repository.JsonActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+import java.util.Map;
+
+//@Configuration
 @RequiredArgsConstructor
 public class ActivityRepositoryConfig {
 
-    private final DatabaseActivityRepository databaseActivityRepository;
-    private final JsonActivityRepository jsonActivityRepository;
+    private final Map<String, ActivityRepository> activityRepositories;
 
     @Value("${activity.repository.type}")
     private String repositoryType;
@@ -21,8 +19,8 @@ public class ActivityRepositoryConfig {
     @Bean
     public ActivityRepository activityRepository() {
         return switch (repositoryType.toLowerCase()) {
-            case "jpa" -> databaseActivityRepository;
-            case "json" -> jsonActivityRepository;
+            case "jpa" -> activityRepositories.get("jpa");
+            case "json" -> activityRepositories.get("json");
             default -> throw new IllegalArgumentException("Unknown repository type: " + repositoryType);
         };
     }
