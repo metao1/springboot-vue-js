@@ -1,6 +1,6 @@
 package com.getyourguide.demo.presentation;
 
-import com.getyourguide.demo.domain.Activity;
+import com.getyourguide.demo.presentation.dto.ActivityDto;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class TestUtils {
 
     public static <T> Matcher<Iterable<?>> matchActivityField(
-            List<Activity> pes, Function<Activity, T> extractor
+            List<ActivityDto> pes, Function<ActivityDto, T> extractor
     ) {
         return Matchers.containsInAnyOrder(pes.stream().map(extractor).toArray());
     }

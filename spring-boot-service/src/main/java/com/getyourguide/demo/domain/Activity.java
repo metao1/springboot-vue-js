@@ -1,18 +1,20 @@
 package com.getyourguide.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.getyourguide.demo.application.Supplier;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Objects;
 
 @Getter
-@Setter
 @Builder
 @Entity(name = "activity")
 @AllArgsConstructor
@@ -26,7 +28,10 @@ public class Activity {
     private String currency;
     private double rating;
     private boolean specialOffer;
-    private Long supplierId;
+
+    @JsonProperty("supplierId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Supplier supplier;
 
     @Override
     public final boolean equals(Object object) {

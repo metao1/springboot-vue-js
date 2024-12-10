@@ -2,8 +2,6 @@ package com.getyourguide.demo.application.filter;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -15,18 +13,22 @@ import java.util.Objects;
  */
 @Getter
 public abstract class Filter<T> {
-    private final List<Filter<T>> filters = new ArrayList<>();
 
     /**
-     * The key that identifies the filter criterion.
+     * The key that identifies the filter.
      */
     private final String key;
     private final T value;
+    private Filter<T> andThen;
+
+    public Filter<T> andThen(Filter<T> andThen) {
+        this.andThen = andThen;
+        return this;
+    }
 
     public Filter(String key, T value) {
         this.key = key;
         this.value = value;
-        addFilter(this);
     }
 
     /**
@@ -37,12 +39,13 @@ public abstract class Filter<T> {
      */
     public abstract boolean matches(T entity);
 
-    public void addFilter(Filter<T> filter) {
-        filters.add(filter);
-    }
-
     public boolean allMatches(T t) {
-        return filters.stream().allMatch(filter -> filter.matches(t));
+        for (Filter<T> filter = this; filter != null; filter = filter.andThen) {
+            if (!filter.matches(t)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

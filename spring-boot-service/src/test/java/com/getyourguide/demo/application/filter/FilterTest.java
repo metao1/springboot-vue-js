@@ -1,6 +1,10 @@
 package com.getyourguide.demo.application.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.getyourguide.demo.application.Supplier;
 import com.getyourguide.demo.domain.Activity;
+import com.getyourguide.demo.infrastructure.deserializer.SupplierDeserializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,8 +12,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -102,14 +108,13 @@ class FilterTest {
         @MethodSource("provideActivitiesAndExpectedResults")
         @DisplayName("Should filter activities by title and rating")
         void testChainedFilters(List<Activity> activities, int expectedSize, String description) {
-            Filter<Activity> titleFilter = new TitleFilter(Activity.builder().title("spring").build());
-            Filter<Activity> rateFilter = new AboveRateFilter(Activity.builder().rating(2d).build());
-
-            titleFilter.addFilter(rateFilter);
+            // Activity Rating filter rating equals to 4.0 and above
+            Filter<Activity> rateFilter = new RateAboveAndEqualFilter(Activity.builder().rating(4d).build());
+            // Activity Title filter contains spring case insensitive, chained filters first by title then by rating
+            Filter<Activity> titleFilter = new TitleFilter(Activity.builder().title("spring").build()).andThen(rateFilter);
 
             var filteredActivities = activities.stream()
                     .filter(titleFilter::matches)
-                    .filter(rateFilter::matches)
                     .toList();
 
             assertThat(filteredActivities).as(description).hasSize(expectedSize);
@@ -119,12 +124,12 @@ class FilterTest {
             return Stream.of(
                     Arguments.of(
                             List.of(
-                                    Activity.builder().title("Spring Boot").build(),
+                                    Activity.builder().title("Boot").build(),
                                     Activity.builder().title("Spring").rating(4d).build(),
-                                    Activity.builder().title("Spring Boot").rating(5d).build()
+                                    Activity.builder().title("Spring Boot").rating(2d).build()
                             ),
                             2,
-                            "Filter by title and rating, all have rating 4.0 and above"),
+                            "should filter 2 activities"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(2d).build(),
@@ -132,34 +137,34 @@ class FilterTest {
                                     Activity.builder().title("Spring Boot").rating(2d).build()
                             ),
                             3,
-                            "Filter by title and rating, all have below 2.0"),
+                            "Filter by title and rating, all have rating above and equal to 2.0 and title contains spring case insensitive"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("Spring").rating(1d).build()
+                                    Activity.builder().title("spring boot").rating(1d).build()
                             ),
-                            0,
-                            "Filter by title and rating, all have rating 1.0"),
+                            2,
+                            "Filter by title and rating, all have rating above 1.0 and title contains spring case insensitive"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("Spring").rating(1d).build()
+                                    Activity.builder().title("spring ").rating(1d).build()
                             ),
-                            0,
+                            2,
                             "Filter by title and rating, all have rating 1.0"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
                                     Activity.builder().title("Spring").rating(0d).build()
                             ),
-                            0,
+                            2,
                             "Filter by title and rating, only one has rating below 1.0"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
                                     Activity.builder().title("Spring").build()
                             ),
-                            0,
+                            2,
                             "Filter by title and rating, only one has rating 1.0"),
                     Arguments.of(List.of(), 0, "Empty list"),
                     Arguments.of(List.of(Activity.builder().title("Spring").rating(3d).build()),
@@ -169,9 +174,9 @@ class FilterTest {
         }
     }
 
-    private static class AboveRateFilter extends Filter<Activity> {
+    private static class RateAboveAndEqualFilter extends Filter<Activity> {
 
-        public AboveRateFilter(Activity value) {
+        public RateAboveAndEqualFilter(Activity value) {
             super("rating", value);
         }
 
@@ -218,6 +223,33 @@ class FilterTest {
         public boolean matches(LocalDateTime entity) {
             return entity.equals(super.getValue());
         }
+    }
+
+    @Test
+    void testActivityDeserializationWithSupplier() throws IOException {
+        Map<Long, Supplier> supplierMap = Map.of(
+                1L, new Supplier(1L, "Supplier1", "Address1", 12345, "City1", "Country1", null)
+        );
+
+        SupplierDeserializer supplierDeserializer = new SupplierDeserializer(supplierMap);
+        ObjectMapper testMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Supplier.class, supplierDeserializer);
+        testMapper.registerModule(module);
+
+        String activityJson = """
+                [{
+                    "id": 25651,
+                    "title": "Sample Activity",
+                    "price": 14,
+                    "currency": "$",
+                    "rating": 4.8,
+                    "specialOffer": false,
+                    "supplier": 1
+                }]
+                """;
+        List<Activity> activities = testMapper.readValue(activityJson, testMapper.getTypeFactory().constructCollectionType(List.class, Activity.class));
+        assertThat(activities.get(0).getSupplier().getName()).isEqualTo("Supplier1");
     }
 }
 

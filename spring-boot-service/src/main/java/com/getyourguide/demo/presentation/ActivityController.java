@@ -2,6 +2,8 @@ package com.getyourguide.demo.presentation;
 
 import com.getyourguide.demo.domain.Activity;
 import com.getyourguide.demo.domain.service.ActivityService;
+import com.getyourguide.demo.infrastructure.mapper.ActivityMapper;
+import com.getyourguide.demo.presentation.dto.ActivityDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -23,7 +25,8 @@ public class ActivityController {
     public void debug(@RequestParam(name = "title", required = false, defaultValue = "NONE") String title, Model model) {
         model.addAttribute("title", title);
         var activities = activityService.getActivitiesByTitle(title);
-        model.addAttribute("activities", activities);
+        final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
+        model.addAttribute("activities", activityDtos);
     }
 
     /**
@@ -35,9 +38,12 @@ public class ActivityController {
      * @return A JSON response containing the results of the query.
      */
     @GetMapping("/activities")
-    public ResponseEntity<List<Activity>> activities(
+    public ResponseEntity<List<ActivityDto>> activities(
             @RequestParam(name = "title", required = false, defaultValue = "NONE") String title) {
         final List<Activity> activities = activityService.getActivitiesByTitle(title);
-        return ResponseEntity.ok(activities);
+        // convert activities to ActivityDto
+        final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
+        return ResponseEntity.ok(activityDtos);
     }
+
 }

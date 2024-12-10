@@ -1,8 +1,11 @@
 package com.getyourguide.demo.infrastructure.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.getyourguide.demo.application.Supplier;
 import com.getyourguide.demo.application.filter.Filter;
 import com.getyourguide.demo.domain.Activity;
+import com.getyourguide.demo.infrastructure.deserializer.SupplierDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,14 +18,18 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "activity.repository.type", havingValue = "json")
 public class JsonActivityRepository implements ActivityRepository {
     private final List<Activity> activities = new ArrayList<>();
+    private  ObjectMapper objectMapper = new ObjectMapper();
     private final ResourceLoader resourceLoader;
-    private final ObjectMapper objectMapper;
+
 
     @Override
     public List<Activity> findByFilter(Filter<Activity> filter) {
@@ -43,8 +50,18 @@ public class JsonActivityRepository implements ActivityRepository {
     @SneakyThrows
     void run(AvailabilityChangeEvent<ReadinessState> event) {
         if (event.getState().equals(ReadinessState.ACCEPTING_TRAFFIC)) {
-            List<Activity> loadedActivities = readFromResources("static/activities.json", Activity.class);
-            activities.addAll(loadedActivities);
+
+            List<Supplier> loadedSuppliers = readFromResources("static/suppliers.json", Supplier.class);
+            Map<Long, Supplier> supplierMap = loadedSuppliers.stream()
+                    .collect(Collectors.toMap(Supplier::getId, Function.identity()));
+
+            SupplierDeserializer supplierDeserializer = new SupplierDeserializer(supplierMap);
+            objectMapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(Supplier.class, supplierDeserializer);
+            objectMapper.registerModule(module);
+            List<Activity> activities = readFromResources("static/activities.json", Activity.class);
+            saveAll(activities);
         }
     }
 

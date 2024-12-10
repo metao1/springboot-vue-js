@@ -1,7 +1,10 @@
 package com.getyourguide.demo.presentation;
 
+import com.getyourguide.demo.application.Supplier;
 import com.getyourguide.demo.domain.Activity;
 import com.getyourguide.demo.domain.service.ActivityService;
+import com.getyourguide.demo.infrastructure.mapper.ActivityMapper;
+import com.getyourguide.demo.presentation.dto.ActivityDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,12 +37,26 @@ public class ActivityControllerTest {
     @MockBean
     ActivityService activityService;
 
-
     public static Stream<Arguments> provideTitleReturnActivities() {
         return Stream.of(
                 Arguments.of(
                         List.of(
-                                new Activity(25651L, "Black Forest Cruise", 20, "EUR", 4.5, true, 10L)
+                                Activity.builder()
+                                        .id(25651L)
+                                        .title("Black Forest Cruise")
+                                        .price(20)
+                                        .currency("EUR")
+                                        .rating(4.5)
+                                        .specialOffer(true)
+                                        .supplier(Supplier.builder()
+                                                .id(123L)
+                                                .name("Cruise Company")
+                                                .address("Black Forest Avenue")
+                                                .zip(12345)
+                                                .city("Berlin")
+                                                .country("Germany")
+                                                .build())
+                                        .build()
                         ),
                         "Black",
                         1
@@ -54,18 +71,21 @@ public class ActivityControllerTest {
     void testGetActivitiesMethodSimulatingDifferentExpectedResponses(List<Activity> expectedActivities, String title, int expectedSize) {
         // WHEN
         when(activityService.getActivitiesByTitle(title)).thenReturn(expectedActivities);
+        var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 
         // THEN
         mockMvc.perform(get("/activities").queryParam("title", title))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(expectedSize))
-                .andExpect(jsonPath("$[*].id", matchActivityField(expectedActivities, activity -> activity.getId().intValue())))
-                .andExpect(jsonPath("$[*].title", matchActivityField(expectedActivities, Activity::getTitle)))
-                .andExpect(jsonPath("$[*].price", matchActivityField(expectedActivities, Activity::getPrice)))
-                .andExpect(jsonPath("$[*].currency", matchActivityField(expectedActivities, Activity::getCurrency)))
-                .andExpect(jsonPath("$[*].rating", matchActivityField(expectedActivities, Activity::getRating)))
-                .andExpect(jsonPath("$[*].specialOffer", matchActivityField(expectedActivities, Activity::isSpecialOffer)))
-                .andExpect(jsonPath("$[*].supplierId", matchActivityField(expectedActivities, activity -> activity.getSupplierId().intValue())));
+                .andExpect(jsonPath("$[*].id", matchActivityField(expectedActivityDtos, activity -> activity.id().intValue())))
+                .andExpect(jsonPath("$[*].title", matchActivityField(expectedActivityDtos, ActivityDto::title)))
+                .andExpect(jsonPath("$[*].price", matchActivityField(expectedActivityDtos, ActivityDto::price)))
+                .andExpect(jsonPath("$[*].currency", matchActivityField(expectedActivityDtos, ActivityDto::currency)))
+                .andExpect(jsonPath("$[*].rating", matchActivityField(expectedActivityDtos, ActivityDto::rating)))
+                .andExpect(jsonPath("$[*].specialOffer", matchActivityField(expectedActivityDtos, ActivityDto::specialOffer)))
+                .andExpect(jsonPath("$[*].supplierId", matchActivityField(expectedActivityDtos, activityDto -> activityDto.supplierId().intValue())))
+                .andExpect(jsonPath("$[*].supplierName", matchActivityField(expectedActivityDtos, ActivityDto::supplierName)))
+                .andExpect(jsonPath("$[*].supplierLocation", matchActivityField(expectedActivityDtos, ActivityDto::supplierLocation)));
     }
 }

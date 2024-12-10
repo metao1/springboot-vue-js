@@ -1,5 +1,6 @@
 package com.getyourguide.demo.infrastructure.repository;
 
+import com.getyourguide.demo.application.Supplier;
 import com.getyourguide.demo.application.filter.TitleFilter;
 import com.getyourguide.demo.domain.Activity;
 import lombok.SneakyThrows;
@@ -29,7 +30,14 @@ class JsonActivityRepositoryTest {
                         .currency("USD")
                         .rating(4.5)
                         .specialOffer(true)
-                        .supplierId(123L)
+                        .supplier(Supplier.builder()
+                                .id(123L)
+                                .address("Black Forest")
+                                .city("Berlin")
+                                .zip(12345)
+                                .country("Germany")
+                                .name("Black Forest Cruise")
+                                .build())
                         .build(),
                 Activity.builder()
                         .id(2L)
@@ -38,7 +46,14 @@ class JsonActivityRepositoryTest {
                         .currency("EUR")
                         .rating(4.0)
                         .specialOffer(false)
-                        .supplierId(456L)
+                        .supplier(Supplier.builder()
+                                .id(456L)
+                                .address("Black Forest")
+                                .zip(12345)
+                                .city("Berlin")
+                                .country("Germany")
+                                .name("Black Forest Cruise")
+                                .build())
                         .build()
         );
         jsonActivityRepository.saveAll(mockActivities);
@@ -58,7 +73,29 @@ class JsonActivityRepositoryTest {
                     assertThat(activity.getCurrency()).isEqualTo("USD");
                     assertThat(activity.getRating()).isEqualTo(4.5);
                     assertThat(activity.isSpecialOffer()).isTrue();
-                    assertThat(activity.getSupplierId()).isEqualTo(123L);
+                    assertThat(activity.getSupplier().getId()).isEqualTo(123L);
+                    assertThat(activity.getSupplier().getName()).isEqualTo("Black Forest Cruise");
+                    assertThat(activity.getSupplier().getAddress()).isEqualTo("Black Forest");
+                    assertThat(activity.getSupplier().getCity()).isEqualTo("Berlin");
+                    assertThat(activity.getSupplier().getCountry()).isEqualTo("Germany");
+                });
+
+
+        titleFilter = new TitleFilter(Activity.builder().title("Activity 2").build());
+        filteredActivities = jsonActivityRepository.findByFilter(titleFilter);
+
+        assertThat(filteredActivities).hasSize(1)
+                .allSatisfy(activity -> {
+                    assertThat(activity.getTitle()).isEqualTo("Activity 2");
+                    assertThat(activity.getPrice()).isEqualTo(150);
+                    assertThat(activity.getCurrency()).isEqualTo("EUR");
+                    assertThat(activity.getRating()).isEqualTo(4.0);
+                    assertThat(activity.isSpecialOffer()).isFalse();
+                    assertThat(activity.getSupplier().getId()).isIn(456L);
+                    assertThat(activity.getSupplier().getName()).isEqualTo("Black Forest Cruise");
+                    assertThat(activity.getSupplier().getAddress()).isEqualTo("Black Forest");
+                    assertThat(activity.getSupplier().getCity()).isEqualTo("Berlin");
+                    assertThat(activity.getSupplier().getCountry()).isEqualTo("Germany");
                 });
 
         // add another title filter to the activity filter and check that the result is extended to the second activity
@@ -73,7 +110,7 @@ class JsonActivityRepositoryTest {
                     assertThat(activity.getCurrency()).isIn("EUR", "USD");
                     assertThat(activity.getRating()).isIn(4.0, 4.5);
                     assertThat(activity.isSpecialOffer()).isIn(false, true);
-                    assertThat(activity.getSupplierId()).isIn(456L, 123L);
+                    assertThat(activity.getSupplier().getId()).isIn(456L, 123L);
                 });
     }
 
@@ -97,7 +134,7 @@ class JsonActivityRepositoryTest {
                         .currency("GBP")
                         .rating(4.8)
                         .specialOffer(true)
-                        .supplierId(789L)
+                        .supplier(Supplier.builder().id(456L).build())
                         .build()
         );
 

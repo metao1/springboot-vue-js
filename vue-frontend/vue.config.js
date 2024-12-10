@@ -5,7 +5,7 @@ module.exports = defineConfig({
         proxy: {
             '/': {
                 target: 'http://localhost:8080', // this configuration needs to correspond to the Spring Boot backends' application.properties server.port
-                ws: true,
+                ws: false,
                 changeOrigin: true
             }
         }
