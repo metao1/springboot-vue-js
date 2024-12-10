@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4 search__container">
-    <input type="text" v-model="searchQuery" @input="onSearchQueryChange($event.target.value)"
+    <input type="text" v-model="searchQuery" @input="onSearch"
            placeholder="Search activities..." class="w-full p-2 border border-gray-300 rounded">
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     onSearch() {
-      this.onSearchQueryChange(this.searchQuery);
+      this.$emit('update:activities', this.searchQuery);
     }
   }
 };
