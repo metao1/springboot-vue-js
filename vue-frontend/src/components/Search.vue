@@ -10,12 +10,6 @@ export default {
   components: {},
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Search",
-  props: {
-    onSearchQueryChange: {
-      type: Function,
-      required: true
-    }
-  },
   data() {
     return {
       searchQuery: ''
