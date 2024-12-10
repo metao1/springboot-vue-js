@@ -39,8 +39,8 @@ export default {
           rating: activity.rating,
           specialOffer: activity.specialOffer || false,
           supplierId: activity.supplierId,
-          supplierName: activity.supplierId.name,
-          supplierLocation: activity.location
+          supplierName: activity.supplierName,
+          supplierLocation: activity.supplierLocation
         }));
       } catch (error) {
         console.error('Failed to fetch activities:', error);
