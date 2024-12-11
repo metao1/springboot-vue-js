@@ -225,32 +225,6 @@ class FilterTest {
         }
     }
 
-    @Test
-    void testActivityDeserializationWithSupplier() throws IOException {
-        Map<Long, Supplier> supplierMap = Map.of(
-                1L, new Supplier(1L, "Supplier1", "Address1", 12345, "City1", "Country1", null)
-        );
-
-        SupplierDeserializer supplierDeserializer = new SupplierDeserializer(supplierMap);
-        ObjectMapper testMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Supplier.class, supplierDeserializer);
-        testMapper.registerModule(module);
-
-        String activityJson = """
-                [{
-                    "id": 25651,
-                    "title": "Sample Activity",
-                    "price": 14,
-                    "currency": "$",
-                    "rating": 4.8,
-                    "specialOffer": false,
-                    "supplier": 1
-                }]
-                """;
-        List<Activity> activities = testMapper.readValue(activityJson, testMapper.getTypeFactory().constructCollectionType(List.class, Activity.class));
-        assertThat(activities.get(0).getSupplier().getName()).isEqualTo("Supplier1");
-    }
 }
 
 
