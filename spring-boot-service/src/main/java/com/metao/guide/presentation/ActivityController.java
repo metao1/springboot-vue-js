@@ -1,5 +1,8 @@
 package com.getyourguide.demo.presentation;
 
+import com.getyourguide.demo.application.filter.Filter;
+import com.getyourguide.demo.application.filter.PriceFilter;
+import com.getyourguide.demo.application.filter.TitleFilter;
 import com.getyourguide.demo.domain.Activity;
 import com.getyourguide.demo.domain.service.ActivityService;
 import com.getyourguide.demo.infrastructure.mapper.ActivityMapper;
@@ -22,9 +25,14 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping("/debug")
-    public void debug(@RequestParam(name = "title", required = false, defaultValue = "NONE") String title, Model model) {
+    public void debug(@RequestParam(name = "title", required = false, defaultValue = "NONE") String title,
+                      @RequestParam(name = "price", required = false, defaultValue = "0") int price,
+                      Model model) {
         model.addAttribute("title", title);
-        var activities = activityService.getActivitiesByTitle(title);
+        model.addAttribute("price", price);
+        Filter<Activity> filter = createFilter(title, price);
+
+        var activities = activityService.getActivitiesByFilter(filter);
         final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
         model.addAttribute("activities", activityDtos);
     }
@@ -39,11 +47,13 @@ public class ActivityController {
      */
     @GetMapping("/activities")
     public ResponseEntity<List<ActivityDto>> activities(
-            @RequestParam(name = "title", required = false, defaultValue = "NONE") String title) {
-        final List<Activity> activities = activityService.getActivitiesByTitle(title);
+            @RequestParam(name = "title", required = false, defaultValue = "NONE") String title,
+            @RequestParam(name = "price", required = false, defaultValue = "0") int price
+    ) {
+        var filter = createFilter(title, price);
+        final List<Activity> activities = activityService.getActivitiesByFilter(filter);
         // convert activities to ActivityDto
         final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
         return ResponseEntity.ok(activityDtos);
     }
-
 }

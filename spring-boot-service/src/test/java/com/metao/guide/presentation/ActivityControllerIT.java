@@ -68,7 +68,7 @@ public class ActivityControllerIT {
         @DisplayName("Should return a list of activities according to the title filter")
         void testGetActivitiesMethodWithDifferentFilterValues(String description, String title, int expectedSize) {
                 // GIVEN
-                var expectedActivities = activityService.getActivitiesByTitle(title);
+                var expectedActivities = activityService.getActivitiesByFilter(title);
 
                 var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 

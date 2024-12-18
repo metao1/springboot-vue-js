@@ -31,7 +31,7 @@ class ActivityServiceTest {
     }
 
     @Test
-    void getActivitiesByTitle_shouldReturnAllActivitiesWhenTitleIsNone() {
+    void getActivitiesByTitle_shouldReturnAllActivitiesWhenFilterIsNone() {
         // Arrange
         String title = "NONE";
         List<Activity> expectedActivities = List.of(
@@ -41,7 +41,7 @@ class ActivityServiceTest {
         when(activityRepository.findAllActivities()).thenReturn(expectedActivities);
 
         // Act
-        List<Activity> actualActivities = activityService.getActivitiesByTitle(title);
+        List<Activity> actualActivities = activityService.getActivitiesByFilter(title);
 
         // Assert
         assertEquals(expectedActivities, actualActivities);
@@ -50,7 +50,7 @@ class ActivityServiceTest {
     }
 
     @Test
-    void getActivitiesByTitle_shouldFilterActivitiesByTitle() {
+    void getActivitiesByTitle_shouldFilterActivitiesByFilter() {
         // Arrange
         String title = "Hiking";
         Activity filterActivity = Activity.builder().title(title).build();
@@ -64,7 +64,7 @@ class ActivityServiceTest {
         when(activityRepository.findByFilter(titleFilter)).thenReturn(filteredActivities);
 
         // Act
-        List<Activity> actualActivities = activityService.getActivitiesByTitle(title);
+        List<Activity> actualActivities = activityService.getActivitiesByFilter(title);
 
         // Assert
         assertEquals(filteredActivities, actualActivities);
@@ -73,13 +73,13 @@ class ActivityServiceTest {
     }
 
     @Test
-    void getActivitiesByTitle_shouldReturnEmptyListWhenTitleIsEmpty() {
+    void getActivitiesByTitle_shouldReturnEmptyListWhenFilterIsEmpty() {
         // Arrange
         String title = "";
         when(activityRepository.findAllActivities()).thenReturn(List.of());
 
         // Act
-        List<Activity> actualActivities = activityService.getActivitiesByTitle(title);
+        List<Activity> actualActivities = activityService.getActivitiesByFilter(title);
 
         // Assert
         assertEquals(0, actualActivities.size());

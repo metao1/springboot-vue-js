@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import Activities from './components/Activities.vue';
 import Search from './components/Search.vue';
 
@@ -22,7 +22,9 @@ export default {
 
     const fetchActivities = async (searchQuery = '') => {
       try {
-        const response = await fetch(`http://localhost:8080/activities?title=${searchQuery}`, {
+        var price = 40;
+        var url = `http://localhost:8080/activities?title=${searchQuery}` + `&price=${price}`;
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             Accept: 'application/json',

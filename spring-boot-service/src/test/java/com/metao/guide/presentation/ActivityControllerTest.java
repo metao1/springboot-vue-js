@@ -70,7 +70,7 @@ public class ActivityControllerTest {
     @DisplayName("Should return a list of activities according simulated getActivitiesByTitle({0})")
     void testGetActivitiesMethodSimulatingDifferentExpectedResponses(List<Activity> expectedActivities, String title, int expectedSize) {
         // WHEN
-        when(activityService.getActivitiesByTitle(title)).thenReturn(expectedActivities);
+        when(activityService.getActivitiesByFilter(title)).thenReturn(expectedActivities);
         var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 
         // THEN
