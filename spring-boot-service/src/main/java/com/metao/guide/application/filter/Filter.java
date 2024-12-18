@@ -1,5 +1,6 @@
-package com.getyourguide.demo.application.filter;
+package com.metao.guide.application.filter;
 
+import com.metao.guide.domain.Activity;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -14,6 +15,12 @@ import java.util.Objects;
 @Getter
 public abstract class Filter<T> {
 
+    public static final Filter<Activity> DEFAULT = new Filter<>("title", Activity.builder().build()) {
+        @Override
+        public boolean matches(Activity entity) {
+            return true;
+        }
+    };
     /**
      * The key that identifies the filter.
      */

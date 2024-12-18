@@ -27,7 +27,7 @@ This project is a web application that allows users to search for activities. It
 ## Architectural Decisions
 
 1. **Backend API**: The backend is designed to expose a REST API that allows the frontend to fetch activities based on search queries. This decision was made to keep the client lightweight and to leverage server-side capabilities for data retrieval.
-The jpa added just to show we can extend application using different sources not only json.
+   The jpa added just to show we can extend application using different sources not only json.
 2. **Server-Side Filtering Logic**: The filtering logic is centralized on the server side. This design choice allows for better scalability and enables other clients, such as mobile applications, and applying caching, indexing on server improving the performance, and to utilize the same API for fetching activities. The client sends a search query to the server, which processes the request and returns only the relevant activities.
 
 3. **Flexible Data Source Configuration**: The application supports loading activities from different sources by specifying the `activity.repository.type` in the `application.properties` file. You can set it to `json` to load from a JSON file or `jpa` to load from a database. This flexibility allows for easier testing and integration with different data sources.
@@ -44,7 +44,7 @@ To run the application locally, follow these steps:
    ```
 
 2. **Build and Run with Docker**:
-    Make sure you have Docker and Docker installed. Then run:
+   Make sure you have Docker and Docker installed. Then run:
    ```bash
     docker compose up --build
    ```
@@ -67,11 +67,11 @@ To run the application locally, follow these steps:
     ```
 6. Improvements Left Out
 
-   - **Pagination**: Implement pagination to handle large datasets.
-   - **Authentication**: Add authentication to secure the API and frontend.
-   - **Error Handling**: While basic error handling is implemented, more robust error handling could be added to provide better user feedback in case of API failures.
-   - **Loading States**: Implementing loading indicators while fetching data from the API would enhance user experience.
-   - **Testing**: Adding unit and integration tests for both the backend and frontend components would improve code reliability and maintainability.
-   - **Styling Enhancements**: The UI could be further enhanced with better styling and layout adjustments for a more polished look.
+    - **Pagination**: Implement pagination to handle large datasets.
+    - **Authentication**: Add authentication to secure the API and frontend.
+    - **Error Handling**: While basic error handling is implemented, more robust error handling could be added to provide better user feedback in case of API failures.
+    - **Loading States**: Implementing loading indicators while fetching data from the API would enhance user experience.
+    - **Testing**: Adding unit and integration tests for both the backend and frontend components would improve code reliability and maintainability.
+    - **Styling Enhancements**: The UI could be further enhanced with better styling and layout adjustments for a more polished look.
 
 

@@ -1,9 +1,9 @@
-package com.getyourguide.demo.infrastructure.deserializer;
+package com.metao.guide.infrastructure.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.getyourguide.demo.application.Supplier;
+import com.metao.guide.application.Supplier;
 
 import java.io.IOException;
 import java.util.Map;

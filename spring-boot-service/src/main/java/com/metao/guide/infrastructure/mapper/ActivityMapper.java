@@ -1,7 +1,7 @@
-package com.getyourguide.demo.infrastructure.mapper;
+package com.metao.guide.infrastructure.mapper;
 
-import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.presentation.dto.ActivityDto;
+import com.metao.guide.domain.Activity;
+import com.metao.guide.presentation.dto.ActivityDto;
 
 import java.util.List;
 

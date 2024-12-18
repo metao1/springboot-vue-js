@@ -1,8 +1,9 @@
-package com.getyourguide.demo.infrastructure.repository;
+package com.metao.guide.infrastructure.repository;
 
-import com.getyourguide.demo.application.Supplier;
-import com.getyourguide.demo.application.filter.TitleFilter;
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.application.Supplier;
+import com.metao.guide.application.filter.Filter;
+import com.metao.guide.application.filter.TitleFilter;
+import com.metao.guide.domain.Activity;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,16 +116,6 @@ class JsonActivityRepositoryTest {
     }
 
     @Test
-    void testFindAllActivities() {
-
-        List<Activity> allActivities = jsonActivityRepository.findAllActivities();
-
-        assertThat(allActivities).hasSize(2);
-        assertThat(allActivities.get(0).getTitle()).isEqualTo("Activity 1");
-        assertThat(allActivities.get(1).getTitle()).isEqualTo("Activity 2");
-    }
-
-    @Test
     void testSaveAll() {
         List<Activity> newActivities = List.of(
                 Activity.builder()
@@ -140,7 +131,7 @@ class JsonActivityRepositoryTest {
 
         jsonActivityRepository.saveAll(newActivities);
 
-        assertThat(jsonActivityRepository.findAllActivities()).hasSize(3);
-        assertThat(jsonActivityRepository.findAllActivities().get(2).getTitle()).isEqualTo("Activity 3");
+        assertThat(jsonActivityRepository.findByFilter(Filter.DEFAULT)).hasSize(3);
+        assertThat(jsonActivityRepository.findByFilter(Filter.DEFAULT).get(2).getTitle()).isEqualTo("Activity 3");
     }
 }

@@ -1,4 +1,4 @@
-package com.getyourguide.demo.presentation.dto;
+package com.metao.guide.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

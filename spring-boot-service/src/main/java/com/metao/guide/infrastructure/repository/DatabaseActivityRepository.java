@@ -1,8 +1,8 @@
-package com.getyourguide.demo.infrastructure.repository;
+package com.metao.guide.infrastructure.repository;
 
-import com.getyourguide.demo.application.filter.Filter;
-import com.getyourguide.demo.application.filter.TitleFilter;
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.application.filter.Filter;
+import com.metao.guide.application.filter.TitleFilter;
+import com.metao.guide.domain.Activity;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 
 @Service
@@ -24,11 +23,6 @@ public class DatabaseActivityRepository implements ActivityRepository {
     public List<Activity> findByFilter(Filter<Activity> filterManager) {
         Specification<Activity> specification = toSpecification(filterManager);
         return activityRepository.findAll(specification);
-    }
-
-    @Override
-    public List<Activity> findAllActivities() {
-        return StreamSupport.stream(activityRepository.findAll().spliterator(), false).toList();
     }
 
     @Override

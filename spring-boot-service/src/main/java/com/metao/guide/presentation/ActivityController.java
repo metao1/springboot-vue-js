@@ -1,12 +1,9 @@
-package com.getyourguide.demo.presentation;
+package com.metao.guide.presentation;
 
-import com.getyourguide.demo.application.filter.Filter;
-import com.getyourguide.demo.application.filter.PriceFilter;
-import com.getyourguide.demo.application.filter.TitleFilter;
-import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.domain.service.ActivityService;
-import com.getyourguide.demo.infrastructure.mapper.ActivityMapper;
-import com.getyourguide.demo.presentation.dto.ActivityDto;
+import com.metao.guide.domain.Activity;
+import com.metao.guide.domain.service.ActivityService;
+import com.metao.guide.infrastructure.mapper.ActivityMapper;
+import com.metao.guide.presentation.dto.ActivityDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -30,7 +27,7 @@ public class ActivityController {
                       Model model) {
         model.addAttribute("title", title);
         model.addAttribute("price", price);
-        Filter<Activity> filter = createFilter(title, price);
+        var filter = ActivityService.createFilter(title, price);
 
         var activities = activityService.getActivitiesByFilter(filter);
         final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
@@ -50,7 +47,7 @@ public class ActivityController {
             @RequestParam(name = "title", required = false, defaultValue = "NONE") String title,
             @RequestParam(name = "price", required = false, defaultValue = "0") int price
     ) {
-        var filter = createFilter(title, price);
+        var filter = ActivityService.createFilter(title, price);
         final List<Activity> activities = activityService.getActivitiesByFilter(filter);
         // convert activities to ActivityDto
         final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);

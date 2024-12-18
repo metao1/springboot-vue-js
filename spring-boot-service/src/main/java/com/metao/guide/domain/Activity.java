@@ -1,8 +1,8 @@
-package com.getyourguide.demo.domain;
+package com.metao.guide.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.getyourguide.demo.application.Supplier;
+import com.metao.guide.application.Supplier;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;

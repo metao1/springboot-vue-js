@@ -1,6 +1,6 @@
-package com.getyourguide.demo.application.filter;
+package com.metao.guide.application.filter;
 
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.domain.Activity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

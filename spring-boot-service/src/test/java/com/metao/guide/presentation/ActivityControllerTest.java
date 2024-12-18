@@ -1,10 +1,11 @@
-package com.getyourguide.demo.presentation;
+package com.metao.guide.presentation;
 
-import com.getyourguide.demo.application.Supplier;
-import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.domain.service.ActivityService;
-import com.getyourguide.demo.infrastructure.mapper.ActivityMapper;
-import com.getyourguide.demo.presentation.dto.ActivityDto;
+import com.metao.guide.application.Supplier;
+import com.metao.guide.application.filter.TitleFilter;
+import com.metao.guide.domain.Activity;
+import com.metao.guide.domain.service.ActivityService;
+import com.metao.guide.infrastructure.mapper.ActivityMapper;
+import com.metao.guide.presentation.dto.ActivityDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,11 +17,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.getyourguide.demo.presentation.TestUtils.matchActivityField;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -69,8 +70,12 @@ public class ActivityControllerTest {
     @MethodSource("provideTitleReturnActivities")
     @DisplayName("Should return a list of activities according simulated getActivitiesByTitle({0})")
     void testGetActivitiesMethodSimulatingDifferentExpectedResponses(List<Activity> expectedActivities, String title, int expectedSize) {
+        // GIVEN
+        Activity activity = Activity.builder().title(title).build();
+        TitleFilter titleFilter = new TitleFilter(activity);
+
         // WHEN
-        when(activityService.getActivitiesByFilter(title)).thenReturn(expectedActivities);
+        when(activityService.getActivitiesByFilter(titleFilter)).thenReturn(expectedActivities);
         var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 
         // THEN
@@ -78,14 +83,14 @@ public class ActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(expectedSize))
-                .andExpect(jsonPath("$[*].id", matchActivityField(expectedActivityDtos, activity -> activity.id().intValue())))
-                .andExpect(jsonPath("$[*].title", matchActivityField(expectedActivityDtos, ActivityDto::title)))
-                .andExpect(jsonPath("$[*].price", matchActivityField(expectedActivityDtos, ActivityDto::price)))
-                .andExpect(jsonPath("$[*].currency", matchActivityField(expectedActivityDtos, ActivityDto::currency)))
-                .andExpect(jsonPath("$[*].rating", matchActivityField(expectedActivityDtos, ActivityDto::rating)))
-                .andExpect(jsonPath("$[*].specialOffer", matchActivityField(expectedActivityDtos, ActivityDto::specialOffer)))
-                .andExpect(jsonPath("$[*].supplierId", matchActivityField(expectedActivityDtos, activityDto -> activityDto.supplierId().intValue())))
-                .andExpect(jsonPath("$[*].supplierName", matchActivityField(expectedActivityDtos, ActivityDto::supplierName)))
-                .andExpect(jsonPath("$[*].supplierLocation", matchActivityField(expectedActivityDtos, ActivityDto::supplierLocation)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id", TestUtils.matchActivityField(expectedActivityDtos, activityDto -> activityDto.id().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].title", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::title)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].price", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::price)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].currency", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::currency)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].rating", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::rating)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].specialOffer", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::specialOffer)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].supplierId", TestUtils.matchActivityField(expectedActivityDtos, activityDto -> activityDto.supplierId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].supplierName", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::supplierName)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].supplierLocation", TestUtils.matchActivityField(expectedActivityDtos, ActivityDto::supplierLocation)));
     }
 }

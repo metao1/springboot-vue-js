@@ -1,10 +1,10 @@
-package com.getyourguide.demo.domain.service;
+package com.metao.guide.domain.service;
 
-import com.getyourguide.demo.application.filter.Filter;
-import com.getyourguide.demo.application.filter.PriceFilter;
-import com.getyourguide.demo.application.filter.TitleFilter;
-import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.infrastructure.repository.ActivityRepository;
+import com.metao.guide.application.filter.Filter;
+import com.metao.guide.application.filter.PriceFilter;
+import com.metao.guide.application.filter.TitleFilter;
+import com.metao.guide.domain.Activity;
+import com.metao.guide.infrastructure.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class ActivityService {
         return activityRepository.findByFilter(filter).stream().toList();
     }
 
-    private static Filter<Activity> createFilter(String title, int price) {
+    public static Filter<Activity> createFilter(String title, int price) {
         // create a list of filters
         final Activity activity = Activity.builder()
                 .title(title)

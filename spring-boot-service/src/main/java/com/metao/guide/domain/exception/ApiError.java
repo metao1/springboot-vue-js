@@ -1,4 +1,4 @@
-package com.getyourguide.demo.domain.exception;
+package com.metao.guide.domain.exception;
 
 public record ApiError(String message) {
 

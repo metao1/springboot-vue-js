@@ -1,6 +1,6 @@
-package com.getyourguide.demo.infrastructure.repository;
+package com.metao.guide.infrastructure.repository;
 
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.domain.Activity;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;

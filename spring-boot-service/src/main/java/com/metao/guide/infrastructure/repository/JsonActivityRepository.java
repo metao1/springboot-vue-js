@@ -1,11 +1,11 @@
-package com.getyourguide.demo.infrastructure.repository;
+package com.metao.guide.infrastructure.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.getyourguide.demo.application.Supplier;
-import com.getyourguide.demo.application.filter.Filter;
-import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.infrastructure.deserializer.SupplierDeserializer;
+import com.metao.guide.application.Supplier;
+import com.metao.guide.application.filter.Filter;
+import com.metao.guide.domain.Activity;
+import com.metao.guide.infrastructure.deserializer.SupplierDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,11 +33,6 @@ public class JsonActivityRepository implements ActivityRepository {
     @Override
     public List<Activity> findByFilter(Filter<Activity> filter) {
         return activities.stream().filter(filter::allMatches).toList();
-    }
-
-    @Override
-    public List<Activity> findAllActivities() {
-        return activities;
     }
 
     @Override

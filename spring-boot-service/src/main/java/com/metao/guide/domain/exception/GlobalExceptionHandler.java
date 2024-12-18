@@ -1,4 +1,4 @@
-package com.getyourguide.demo.domain.exception;
+package com.metao.guide.domain.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

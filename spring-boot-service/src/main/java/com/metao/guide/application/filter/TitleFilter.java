@@ -1,6 +1,6 @@
-package com.getyourguide.demo.application.filter;
+package com.metao.guide.application.filter;
 
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.domain.Activity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
@@ -21,8 +21,11 @@ public class TitleFilter extends Filter<Activity> {
 
     @Override
     public boolean matches(Activity activity) {
-        if (!StringUtils.hasText(super.getValue().getTitle()) || !StringUtils.hasText(getValue().getTitle())) {
+        if (activity == null || getValue() == null) {
             return false;
+        }
+        if (!StringUtils.hasText(super.getValue().getTitle())) {
+            return true;
         }
         if (super.getValue().getTitle().equalsIgnoreCase("NONE")) {
             return true;

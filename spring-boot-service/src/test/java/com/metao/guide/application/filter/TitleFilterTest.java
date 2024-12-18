@@ -1,6 +1,6 @@
-package com.getyourguide.demo.application.filter;
+package com.metao.guide.application.filter;
 
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.domain.Activity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +28,7 @@ class TitleFilterTest {
     @Test
     void testTitleFilterDoesNotMatchWithNull() {
         TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern web application").build());
-        assertThrows(NullPointerException.class, () -> filter.matches(null));
+        assertFalse(filter.matches(null));
     }
     void testTitleFilterHandlesSpecialCharactersInTitle() {
         TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern-web application!").build());
@@ -38,7 +38,7 @@ class TitleFilterTest {
     @Test
     void testTitleFilterDoesNotMatchWhenActivityIsNull() {
         TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern web application").build());
-        assertThrows(NullPointerException.class, () -> filter.matches(null));
+        assertFalse(filter.matches(null));
     }
 
     @Test
@@ -64,10 +64,10 @@ class TitleFilterTest {
     @Test
     void testTitleFilterHandlesNullOrEmptyStringsGracefully() {
         TitleFilter filter = new TitleFilter(Activity.builder().title("").build());
-        assertFalse(filter.matches(Activity.builder().title("Build a modern web application").build()));
+        assertTrue(filter.matches(Activity.builder().title("Build a modern web application").build()));
 
         filter = new TitleFilter(Activity.builder().title(null).build());
-        assertFalse(filter.matches(Activity.builder().title("Build a modern web application").build()));
+        assertTrue(filter.matches(Activity.builder().title("Build a modern web application").build()));
 
     }
 }

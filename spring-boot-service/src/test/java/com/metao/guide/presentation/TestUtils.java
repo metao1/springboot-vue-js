@@ -1,6 +1,6 @@
-package com.getyourguide.demo.presentation;
+package com.metao.guide.presentation;
 
-import com.getyourguide.demo.presentation.dto.ActivityDto;
+import com.metao.guide.presentation.dto.ActivityDto;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 

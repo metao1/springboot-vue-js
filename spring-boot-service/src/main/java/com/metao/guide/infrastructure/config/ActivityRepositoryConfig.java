@@ -1,6 +1,6 @@
-package com.getyourguide.demo.infrastructure.config;
+package com.metao.guide.infrastructure.config;
 
-import com.getyourguide.demo.infrastructure.repository.ActivityRepository;
+import com.metao.guide.infrastructure.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

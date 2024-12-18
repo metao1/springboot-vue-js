@@ -1,7 +1,7 @@
-package com.getyourguide.demo.infrastructure.repository;
+package com.metao.guide.infrastructure.repository;
 
-import com.getyourguide.demo.application.filter.Filter;
-import com.getyourguide.demo.domain.Activity;
+import com.metao.guide.application.filter.Filter;
+import com.metao.guide.domain.Activity;
 
 import java.util.List;
 
@@ -18,13 +18,6 @@ public interface ActivityRepository {
      * @return A list of activities that match the given filter criteria.
      */
     List<Activity> findByFilter(Filter<Activity> filter);
-
-    /**
-     * Retrieves all activities from the data source.
-     *
-     * @return A list of all activities.
-     */
-    List<Activity> findAllActivities();
 
     /**
      * Saves or updates a list of activities in the data source.
