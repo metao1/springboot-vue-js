@@ -27,9 +27,8 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = "activity.repository.type", havingValue = "json")
 public class JsonActivityRepository implements ActivityRepository {
     private final List<Activity> activities = new ArrayList<>();
-    private  ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
     private final ResourceLoader resourceLoader;
-
 
     @Override
     public List<Activity> findByFilter(Filter<Activity> filter) {
@@ -66,11 +65,16 @@ public class JsonActivityRepository implements ActivityRepository {
     }
 
     private <T> List<T> readFromResources(String resourcePath, Class<T> clazz) throws IOException {
-        //Read JSON file and convert to a list of activities
-        if (resourceLoader == null || resourceLoader.getClassLoader() == null) {
+        // Read JSON file and convert to a list of activities
+        if (resourceLoader == null) {
             throw new IllegalStateException("ResourceLoader is null");
         }
-        var fileInputStream = resourceLoader.getClassLoader().getResourceAsStream(resourcePath);
-        return objectMapper.readValue(fileInputStream, objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
+        ClassLoader classLoader = resourceLoader.getClassLoader();
+        if (classLoader == null) {
+            throw new IllegalStateException("ClassLoader is null");
+        }
+        var fileInputStream = classLoader.getResourceAsStream(resourcePath);
+        return objectMapper.readValue(fileInputStream,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
     }
 }

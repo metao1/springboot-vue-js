@@ -1,10 +1,6 @@
 package com.getyourguide.demo.application.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.getyourguide.demo.application.Supplier;
 import com.getyourguide.demo.domain.Activity;
-import com.getyourguide.demo.infrastructure.deserializer.SupplierDeserializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,10 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,8 +104,10 @@ class FilterTest {
         void testChainedFilters(List<Activity> activities, int expectedSize, String description) {
             // Activity Rating filter rating equals to 4.0 and above
             Filter<Activity> rateFilter = new RateAboveAndEqualFilter(Activity.builder().rating(4d).build());
-            // Activity Title filter contains spring case insensitive, chained filters first by title then by rating
-            Filter<Activity> titleFilter = new TitleFilter(Activity.builder().title("spring").build()).andThen(rateFilter);
+            // Activity Title filter contains spring case insensitive, chained filters first
+            // by title then by rating
+            Filter<Activity> titleFilter = new TitleFilter(Activity.builder().title("spring").build())
+                    .andThen(rateFilter);
 
             var filteredActivities = activities.stream()
                     .filter(titleFilter::matches)
@@ -126,51 +122,44 @@ class FilterTest {
                             List.of(
                                     Activity.builder().title("Boot").build(),
                                     Activity.builder().title("Spring").rating(4d).build(),
-                                    Activity.builder().title("Spring Boot").rating(2d).build()
-                            ),
+                                    Activity.builder().title("Spring Boot").rating(2d).build()),
                             2,
                             "should filter 2 activities"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(2d).build(),
                                     Activity.builder().title("Spring").rating(3d).build(),
-                                    Activity.builder().title("Spring Boot").rating(2d).build()
-                            ),
+                                    Activity.builder().title("Spring Boot").rating(2d).build()),
                             3,
                             "Filter by title and rating, all have rating above and equal to 2.0 and title contains spring case insensitive"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("spring boot").rating(1d).build()
-                            ),
+                                    Activity.builder().title("spring boot").rating(1d).build()),
                             2,
                             "Filter by title and rating, all have rating above 1.0 and title contains spring case insensitive"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("spring ").rating(1d).build()
-                            ),
+                                    Activity.builder().title("spring ").rating(1d).build()),
                             2,
                             "Filter by title and rating, all have rating 1.0"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("Spring").rating(0d).build()
-                            ),
+                                    Activity.builder().title("Spring").rating(0d).build()),
                             2,
                             "Filter by title and rating, only one has rating below 1.0"),
                     Arguments.of(
                             List.of(
                                     Activity.builder().title("Spring").rating(1d).build(),
-                                    Activity.builder().title("Spring").build()
-                            ),
+                                    Activity.builder().title("Spring").build()),
                             2,
                             "Filter by title and rating, only one has rating 1.0"),
                     Arguments.of(List.of(), 0, "Empty list"),
                     Arguments.of(List.of(Activity.builder().title("Spring").rating(3d).build()),
                             1,
-                            "Only one element")
-            );
+                            "Only one element"));
         }
     }
 
@@ -226,5 +215,3 @@ class FilterTest {
     }
 
 }
-
-

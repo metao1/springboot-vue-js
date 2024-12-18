@@ -4,7 +4,7 @@ import com.getyourguide.demo.domain.Activity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
-import org.springframework.lang.NonNull;
+
 import org.springframework.util.StringUtils;
 
 @Getter
@@ -21,8 +21,8 @@ public class TitleFilter extends Filter<Activity> {
     }
 
     @Override
-    public boolean matches(@NonNull Activity activity) {
-        //remove all spaces special characters characters
+    public boolean matches(Activity activity) {
+        // remove all spaces special characters characters
         if (!StringUtils.hasText(super.getValue().getTitle()) || !StringUtils.hasText(getValue().getTitle())) {
             return false;
         }
