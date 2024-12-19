@@ -1,6 +1,7 @@
 package com.metao.guide.infrastructure.repository;
 
 import com.metao.guide.application.filter.Filter;
+import com.metao.guide.application.filter.PriceFilter;
 import com.metao.guide.application.filter.TitleFilter;
 import com.metao.guide.domain.Activity;
 import jakarta.persistence.criteria.Predicate;
@@ -36,7 +37,6 @@ public class DatabaseActivityRepository implements ActivityRepository {
             List<Predicate> predicates = new ArrayList<>();
             Predicate predicate;
             while (f != null) {
-                resolveFilterValue(f);
                 predicate = cb.equal(root.get(f.getKey()), resolveFilterValue(f));
                 predicates.add(predicate);
                 f = f.getAndThen();
@@ -48,6 +48,7 @@ public class DatabaseActivityRepository implements ActivityRepository {
     private Object resolveFilterValue(Filter<?> filter) {
         return switch (filter.getKey()) {
             case "title" -> ((TitleFilter) filter).getValue().getTitle();
+            case "price" -> ((PriceFilter) filter).getValue().getPrice();
             default -> throw new IllegalArgumentException("Unknown filter key: " + filter.getKey());
         };
     }
