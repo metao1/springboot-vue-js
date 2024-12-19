@@ -131,7 +131,14 @@ class JsonActivityRepositoryTest {
 
         jsonActivityRepository.saveAll(newActivities);
 
-        assertThat(jsonActivityRepository.findByFilter(Filter.DEFAULT)).hasSize(3);
-        assertThat(jsonActivityRepository.findByFilter(Filter.DEFAULT).get(2).getTitle()).isEqualTo("Activity 3");
+        assertThat(jsonActivityRepository.findByFilter(DEFAULT)).hasSize(3);
+        assertThat(jsonActivityRepository.findByFilter(DEFAULT).get(2).getTitle()).isEqualTo("Activity 3");
     }
+
+    public static final Filter<Activity> DEFAULT = new Filter<>("title", Activity.builder().build()) {
+        @Override
+        public boolean matches(Activity entity) {
+            return true;
+        }
+    };
 }

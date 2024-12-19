@@ -14,13 +14,6 @@ import java.util.Objects;
  */
 @Getter
 public abstract class Filter<T> {
-
-    public static final Filter<Activity> DEFAULT = new Filter<>("title", Activity.builder().build()) {
-        @Override
-        public boolean matches(Activity entity) {
-            return true;
-        }
-    };
     /**
      * The key that identifies the filter.
      */
