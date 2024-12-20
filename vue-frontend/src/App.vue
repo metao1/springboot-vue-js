@@ -19,11 +19,16 @@ export default {
   },
   setup() {
     const activities = ref([]);
-
+    const currencySymbols = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      // Add more currency mappings as needed
+    };
     const fetchActivities = async (searchQuery = '') => {
       try {
-        var price = 40;
-        var url = `http://localhost:8080/activities?title=${searchQuery}` + `&price=${price}`;
+        //var price = 0;
+        var url = `http://localhost:8080/api/activities?title=${searchQuery}`;
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -31,7 +36,18 @@ export default {
             'Content-Type': 'application/json',
           },
         });
-        activities.value = await response.json();
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          activities.value = data.map(activity => {
+            if (currencySymbols[activity.currency]) {
+              activity.currency = currencySymbols[activity.currency];
+            }
+            return activity;
+          });
+        } else {
+          console.error('No activities found or invalid response format');
+          activities.value = [];
+        }
       } catch (error) {
         console.error('Failed to fetch activities:', error);
       }

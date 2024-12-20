@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -36,22 +37,26 @@ public class DatabaseActivityRepository implements ActivityRepository {
         return (root, query, cb) -> {
             Predicate predicate = cb.conjunction();
             for (Filter<Activity> f = filter; f != null && f.getKey() != null && f.getValue() != null; f = f.getAndThen()) {
-                predicate = andPredicateFields(cb, predicate, root.get("title"), f.getValue(), v -> (v instanceof Activity a) && a.getTitle() != null);
-                predicate = andPredicateFields(cb, predicate, root.get("price"), f.getValue(), v -> (v instanceof Activity a) && a.getPrice() != null && a.getPrice() > 0);
+                predicate = andPredicateFields(cb, predicate, root.get("title"), f.getValue().getTitle(), StringUtils::hasText);
+                predicate = andPredicateFields(cb, predicate, root.get("price"), f.getValue().getPrice(), v -> v > 0);
             }
             return predicate;
         };
     }
 
-    private Predicate andPredicateFields(
+    private <T> Predicate andPredicateFields(
             CriteriaBuilder criteriaBuilder,
             Predicate predicate,
-            Path<Object> path,
-            Object obj,
-            java.util.function.Predicate<Object> predicateFunction
+            Path<?> path,
+            T t,
+            java.util.function.Predicate<T> predicateFunction
     ) {
-        if (predicateFunction.test(obj)) {
-            return criteriaBuilder.and(predicate, path.in(obj));
+        Class<?> pathType = path.getJavaType();
+        if (predicateFunction.test(t)) {
+            if (pathType == Number.class) {
+                return criteriaBuilder.and(predicate, path.in(t));
+            }
+            return criteriaBuilder.and(predicate, criteriaBuilder.like(criteriaBuilder.lower(path.as(String.class)), "%" + t.toString().toLowerCase() + "%"));
         }
         return predicate;
     }

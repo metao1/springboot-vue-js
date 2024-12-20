@@ -6,8 +6,8 @@ import com.metao.guide.domain.service.ActivityService;
 import com.metao.guide.infrastructure.mapper.ActivityMapper;
 import com.metao.guide.presentation.dto.ActivityDto;
 import lombok.SneakyThrows;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,9 +36,17 @@ class ActivityScenarioIT {
     @Autowired
     ActivityService activityService;
 
-    @Test
+    @ParameterizedTest
+    @CsvSource({
+            ",20",
+            "title, 20",
+            "title2, 0",
+            "t, 0",
+            "tit, -1",
+            "title4, 1000000"
+    })
     @SneakyThrows
-    void testWhenSaveAnActivityThenGetActivityReturns() {
+    void testWhenSaveAnActivityThenGetActivityReturns(String title, int price) {
         // GIVEN
         var newActivities = List.of(
                 Activity.builder()
@@ -72,17 +80,19 @@ class ActivityScenarioIT {
                                 .build())
                         .build()
         );
-        var filter = ActivityService.createFilter(null, 0);
+        var filter = ActivityService.createFilter(title, price);
         activityService.saveAll(newActivities);
         var expectedActivities = activityService.getActivitiesByFilter(filter);
         var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
-
+        String url = "/api/activities?price=" + price;
+        if (title != null) {
+            url += "&title=" + title;
+        }
         // THEN
-        mockMvc.perform(get("/api/activities"))
+        mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(expectedActivities.size()))
-                .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)))
+                .andExpect(jsonPath("$.length()").value(expectedActivityDtos.size()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].id",
                         TestUtils.matchActivityField(expectedActivityDtos, activityDto -> activityDto.id().intValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].title",
