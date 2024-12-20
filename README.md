@@ -1,4 +1,4 @@
-[![final](resources/activities.gif)
+![final](resources/activities.gif)
 
 # Activities Search Application
 
