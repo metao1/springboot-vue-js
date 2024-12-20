@@ -79,7 +79,7 @@ public class ActivityControllerTest {
         var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 
         // THEN
-        mockMvc.perform(get("/activities").queryParam("title", title))
+        mockMvc.perform(get("/api/activities").queryParam("title", title))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(expectedSize))

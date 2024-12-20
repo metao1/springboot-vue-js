@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,7 @@ public class Supplier {
     private String city;
     private String country;
 
+    @Setter
     @JsonIgnore
     @OneToMany(mappedBy = "supplier")
     private List<Activity> activities;

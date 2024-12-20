@@ -20,14 +20,18 @@ public class ActivityService {
         return activityRepository.findByFilter(filter).stream().toList();
     }
 
-    public static Filter<Activity> createFilter(String title, int price) {
+    public static Filter<Activity> createFilter(String title, Integer price) {
         // create a list of filters
         final Activity activity = Activity.builder()
                 .title(title)
-                .price(price)
+                .price(price == null ? 0 : price)
                 .build();
         TitleFilter titleFilter = new TitleFilter(activity);
         PriceFilter priceFilter = new PriceFilter(activity);
         return titleFilter.andThen(priceFilter);
+    }
+
+    public void saveAll(List<Activity> activities) {
+        activityRepository.saveAll(activities);
     }
 }

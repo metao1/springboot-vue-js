@@ -27,7 +27,7 @@ public class TitleFilter extends Filter<Activity> {
         if (!StringUtils.hasText(super.getValue().getTitle())) {
             return true;
         }
-        if (super.getValue().getTitle().equalsIgnoreCase("NONE")) {
+        if (super.getValue().getTitle() == null) {
             return true;
         }
         return getLowerCase(activity).contains(getLowerCase(super.getValue()));

@@ -5,12 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.metao.guide.application.Supplier;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
@@ -22,6 +25,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Activity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private int price;
@@ -29,6 +33,7 @@ public class Activity {
     private double rating;
     private boolean specialOffer;
 
+    @Setter
     @JsonProperty("supplierId")
     @ManyToOne(fetch = FetchType.EAGER)
     private Supplier supplier;
@@ -45,4 +50,5 @@ public class Activity {
     public final int hashCode() {
         return Objects.hash(getId());
     }
+
 }

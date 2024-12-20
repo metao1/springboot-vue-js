@@ -31,15 +31,13 @@ public class DatabaseActivityRepository implements ActivityRepository {
         activityRepository.saveAll(activities);
     }
 
-    Specification<Activity> toSpecification(Filter<Activity> filter) {
+    Specification<Activity> toSpecification(final Filter<Activity> filter) {
         return (root, query, cb) -> {
-            Filter<Activity> f = filter;
             List<Predicate> predicates = new ArrayList<>();
             Predicate predicate;
-            while (f != null) {
+            for (Filter<Activity> f = filter; f != null && f.getKey() != null && f.getValue() != null; f = f.getAndThen()) {
                 predicate = cb.equal(root.get(f.getKey()), resolveFilterValue(f));
                 predicates.add(predicate);
-                f = f.getAndThen();
             }
             return predicates.stream().reduce(cb::and).orElse(cb.conjunction());
         };
