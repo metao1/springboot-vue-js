@@ -1,58 +1,79 @@
-# Objective
+![final](resources/activities.gif)
 
-## Key Points
+# Activities Search Application
 
-- We want to assess your skills as a generalist software engineer.
-- We are looking for people who are able to work on a variety of projects and technologies.
-- We are not explicitly looking for expertise in a specific technology or domain. An ideal candidate would be able to work with a variety of technologies.
+## Project Overview
 
-We would like you to build a web application that allows users to search for activities.
-The project is meant to be a simple application that you can build in a few hours.
-We are not looking for a production-ready application but we will assess your project both in terms of quality (user experience/use of best practices/robust architecture) and potential (scalability).
+This project is a web application that allows users to search for activities. It consists of a Spring Boot backend that exposes a REST API and a Vue.js frontend that consumes this API. Users can search for activities by title, and the application displays relevant details such as price, rating, special offers, and supplier information.
 
-In this repository you will find a list of activities that you can use to build your application (please find the file `activities.json` in the `spring-boot-service/src/main/resources/static` folder).
+## Technologies Used
 
-We bootstrapped in advance 2 skeleton applications for the back end and the front end: you will find a skeleton SpringBoot backend application and a VueJS frontend application.
+- **Backend**: Spring Boot
+- **Frontend**: Vue.js
+- **Database**: In-memory data (loaded from a JSON file or JPA)
+- **Containerization**: Docker
+- **API Communication**: REST
 
-You can use them to speed up the implementation, or you can start from scratch choosing the technologies you are most familiar with, or you think most appropriate to fulfill the requirements.
+## Features
 
-# Requirements
+- **Search Functionality**: Users can search for activities by title.
+- **Display Information**: The application displays the following fields for each activity:
+    - Title
+    - Price with currency
+    - Rating
+    - Special offer status
+    - Supplier name and location
+- **Flexible Data Source**: The application can load activities from different sources (JSON or JPA) based on configuration.
+- **Responsive UI**: The frontend is designed to be user-friendly and responsive.
 
-- You need to provide a backend application meant to expose an API (REST or GraphQL).
-- You need to provide a client application consuming the API exposed by the previous application and implement a UI.
-- The client should display the list of activities to the user and allow the user to search for activities by title by
-  providing an input field.
-  - The fields to be displayed are:
-    - title
-    - price with currency
-    - rating
-    - whether it has a special offer or not
-    - the activity's supplier name and their location
-- You need to decide if the filtering logic should be implemented on the client or on the server: please make sure you implement this business logic on the application that you would like to be reviewed.
-- Please ensure that the FULL project can be run locally with the given Docker compose file with `docker compose up --build`. Modify, add any dependencies as required
-- Add notes on your architectural decisions.
-- Please also document any features/improvements you left out in favor of time, preferably with sufficient details on "what, why & how".
-- Additionally, make sure any assumptions you made are noted down.
+## Architectural Decisions
 
-# How to submit your work
+1. **Backend API**: The backend is designed to expose a REST API that allows the frontend to fetch activities based on search queries. This decision was made to keep the client lightweight and to leverage server-side capabilities for data retrieval.
+   The jpa added just to show we can extend application using different sources not only json.
+2. **Server-Side Filtering Logic**: The filtering logic is centralized on the server side. This design choice allows for better scalability and enables other clients, such as mobile applications, and applying caching, indexing on server improving the performance, and to utilize the same API for fetching activities. The client sends a search query to the server, which processes the request and returns only the relevant activities.
 
-Please clone this repository and send us a zip file containing your work.
+3. **Flexible Data Source Configuration**: The application supports loading activities from different sources by specifying the `activity.repository.type` in the `application.properties` file. You can set it to `json` to load from a JSON file or `jpa` to load from a database. This flexibility allows for easier testing and integration with different data sources.
 
-Also, please avoid bundling `node_modules` or other installed dependency directories in your zip file.
+4. **Containerization**: The application is containerized using Docker to ensure that it can be easily run in any environment. A `docker-compose.yml` file is provided to facilitate the setup of both the backend and frontend services.
 
-⚠️ **Make sure not to publish your work on a public repository.** ⚠️
+## Setup Instructions
 
-We will grade your project after submission and eventually invite you for a remote live interview with our engineers.
+To run the application locally, follow these steps:
 
-Depending on the role you are applying for and your level of expertise, you have the flexibility to put a stronger focus in the implementation of either the backend or the client application. We require submissions to have basic functionality on the side of the stack you are less familiar with, however you are welcome to focus your efforts on your focus area, allowing us to assess your skills in your preferred domain.
+1. **Clone the Repository**:
+   ```bash
+   cd <repository-directory>
+   ```
 
-If you opt for this approach, please specify in your notes which application you would like us to thoroughly review. Alternatively, if you feel confident in both the backend and client application, we encourage you to state clearly in your notes that you would like a comprehensive review of both. We are excited to thoroughly evaluate your work across the entire stack.
+2. **Build and Run with Docker**:
+   Make sure you have Docker and Docker installed. Then run:
+   ```bash
+    docker compose up --build
+   ```
 
-Creativity is also encouraged, and while we do not expect you to add a lot more on top of the basic requirements you have freedom to showcase your skills.
+3. **Access the Application**:
+   Once the application is running, you can access it at http://localhost:8081.
 
-# Presentation
 
-- We will ask you to present your work. Please be prepared to present your work, demo it, and explain your choices.
-- We will ask clarifying questions about your code and your design choices.
-- In addition to the presentation we will ask you to refactor the code, add features, or fix bugs:
-  please be prepared to share your screen during the interview and to code live with us.
+4. **(Optional) Run Tests**:
+   ```bash
+   gradle test
+   ```
+
+5.  **(Optional)Configuration: You can specify the data source in the application.properties file:**
+
+    ```properties
+    activity.repository.type=json  # For loading from JSON
+    # or
+    activity.repository.type=jpa    # For loading from JPA
+    ```
+6. Improvements Left Out
+
+    - **Pagination**: Implement pagination to handle large datasets.
+    - **Authentication**: Add authentication to secure the API and frontend.
+    - **Error Handling**: While basic error handling is implemented, more robust error handling could be added to provide better user feedback in case of API failures.
+    - **Loading States**: Implementing loading indicators while fetching data from the API would enhance user experience.
+    - **Testing**: Adding unit and integration tests for both the backend and frontend components would improve code reliability and maintainability.
+    - **Styling Enhancements**: The UI could be further enhanced with better styling and layout adjustments for a more polished look.
+
+
