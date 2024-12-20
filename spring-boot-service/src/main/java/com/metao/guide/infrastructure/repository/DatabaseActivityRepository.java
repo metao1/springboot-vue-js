@@ -53,10 +53,10 @@ public class DatabaseActivityRepository implements ActivityRepository {
     ) {
         Class<?> pathType = path.getJavaType();
         if (predicateFunction.test(t)) {
-            if (pathType == Number.class) {
-                return criteriaBuilder.and(predicate, path.in(t));
+            if (pathType == String.class) {
+                return criteriaBuilder.and(predicate, criteriaBuilder.like(criteriaBuilder.lower(path.as(String.class)), "%" + t.toString().toLowerCase() + "%"));
             }
-            return criteriaBuilder.and(predicate, criteriaBuilder.like(criteriaBuilder.lower(path.as(String.class)), "%" + t.toString().toLowerCase() + "%"));
+            return criteriaBuilder.and(predicate, path.in(t));
         }
         return predicate;
     }

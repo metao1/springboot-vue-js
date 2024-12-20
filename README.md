@@ -1,3 +1,5 @@
+[![final](resources/activities.gif)
+
 # Activities Search Application
 
 ## Project Overview
