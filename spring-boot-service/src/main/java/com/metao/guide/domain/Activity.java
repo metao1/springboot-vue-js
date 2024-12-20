@@ -3,6 +3,7 @@ package com.metao.guide.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.metao.guide.application.Supplier;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,18 +25,19 @@ import java.util.Objects;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private int price;
+    private Integer price;
     private String currency;
     private double rating;
     private boolean specialOffer;
 
     @Setter
     @JsonProperty("supplierId")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Supplier supplier;
 
     @Override

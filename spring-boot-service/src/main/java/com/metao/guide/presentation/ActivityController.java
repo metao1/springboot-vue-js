@@ -56,7 +56,6 @@ public class ActivityController {
     ) {
         var filter = ActivityService.createFilter(title, price);
         final List<Activity> activities = activityService.getActivitiesByFilter(filter);
-        // convert activities to ActivityDto
         final List<ActivityDto> activityDtos = ActivityMapper.mapToDto(activities);
         return ResponseEntity.ok(activityDtos);
     }

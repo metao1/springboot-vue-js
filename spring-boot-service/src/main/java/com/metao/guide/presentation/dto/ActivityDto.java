@@ -1,6 +1,5 @@
 package com.metao.guide.presentation.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ActivityDto(
@@ -12,11 +11,8 @@ public record ActivityDto(
         boolean specialOffer,
         Long supplierId,
         String supplierName,
-        @JsonIgnore
         String supplierCountry,
-        @JsonIgnore
         String supplierCity,
-        @JsonIgnore
         String supplierAddress
 ) {
 

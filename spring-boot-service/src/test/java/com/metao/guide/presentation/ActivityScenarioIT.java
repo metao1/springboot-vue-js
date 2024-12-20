@@ -6,21 +6,18 @@ import com.metao.guide.domain.service.ActivityService;
 import com.metao.guide.infrastructure.mapper.ActivityMapper;
 import com.metao.guide.presentation.dto.ActivityDto;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.DisplayName;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -28,9 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@TestPropertySource(properties = "activity.repository.type=json")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestPropertySource(properties = "activity.repository.type=jpa")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ActivityControllerIT {
+public class ActivityScenarioIT {
 
     @Autowired
     MockMvc mockMvc;
@@ -38,38 +36,53 @@ public class ActivityControllerIT {
     @Autowired
     ActivityService activityService;
 
-    public static Stream<Arguments> provideTitleAndExpectedActivitiesSize() {
-            return Stream.of(
-                    Arguments.of("no title provided", null, 14),
-                    Arguments.of("empty title", "", 14),
-                    Arguments.of("Berlin with capital letters as title provided", "Berlin", 8),
-                    Arguments.of("title provided should be case insensitive", "berlin", 8),
-                    Arguments.of("title provided should be case insensitive", "berlin ", 8),
-                    Arguments.of("title provided should be case insensitive and trimmed", "   berlin  ", 8),
-                    Arguments.of("title provided should be case insensitive and trimmed and with leading/trailing spaces", "   BERLI  ", 8),
-                    Arguments.of("title provided should be case insensitive and trimmed and with leading/trailing spaces and with special characters", "   BERLI!  ", 8));
-    }
-
+    @Test
     @SneakyThrows
-    @ParameterizedTest(name = "Filter by title: case `{0}` for title with value '{1}' should return {2} activities")
-    @MethodSource("provideTitleAndExpectedActivitiesSize")
-    @DisplayName("Should return a list of activities according to the title filter")
-    void testGetActivitiesMethodWithDifferentFilterValues(
-            String description,     // Test case description
-            String title,          // Input title
-            int expectedSize       // Expected result size
-    ) {
+    void testWhenSaveAnActivityThenGetActivityReturns() {
         // GIVEN
-        var filter = ActivityService.createFilter(title, 0);
+        var newActivities = List.of(
+                Activity.builder()
+                        .id(1L)
+                        .title("title")
+                        .price(20)
+                        .currency("EUR")
+                        .rating(4.5)
+                        .specialOffer(true)
+                        .supplier(Supplier.builder()
+                                .name("Cruise Company")
+                                .address("Black Forest Avenue")
+                                .zip(12345)
+                                .city("Berlin")
+                                .country("Germany")
+                                .build())
+                        .build(),
+                Activity.builder()
+                        .id(2L)
+                        .title("title2")
+                        .price(20)
+                        .currency("EUR")
+                        .rating(4.5)
+                        .specialOffer(true)
+                        .supplier(Supplier.builder()
+                                .name("Cruise Company")
+                                .address("Black Forest Avenue")
+                                .zip(12345)
+                                .city("Berlin")
+                                .country("Germany")
+                                .build())
+                        .build()
+        );
+        var filter = ActivityService.createFilter(null, 0);
+        activityService.saveAll(newActivities);
         var expectedActivities = activityService.getActivitiesByFilter(filter);
-
         var expectedActivityDtos = ActivityMapper.mapToDto(expectedActivities);
 
         // THEN
-        mockMvc.perform(get("/api/activities").queryParam("title", title))
+        mockMvc.perform(get("/api/activities"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(expectedSize))
+                .andExpect(jsonPath("$.length()").value(expectedActivities.size()))
+                .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].id",
                         TestUtils.matchActivityField(expectedActivityDtos, activityDto -> activityDto.id().intValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].title",

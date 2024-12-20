@@ -5,12 +5,14 @@ import com.metao.guide.application.filter.PriceFilter;
 import com.metao.guide.application.filter.TitleFilter;
 import com.metao.guide.domain.Activity;
 import com.metao.guide.infrastructure.repository.ActivityRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ActivityService {
 
@@ -18,6 +20,10 @@ public class ActivityService {
 
     public List<Activity> getActivitiesByFilter(Filter<Activity> filter) {
         return activityRepository.findByFilter(filter).stream().toList();
+    }
+
+    public void saveAll(List<Activity> activities) {
+        activityRepository.saveAll(activities);
     }
 
     public static Filter<Activity> createFilter(String title, Integer price) {
@@ -29,9 +35,5 @@ public class ActivityService {
         TitleFilter titleFilter = new TitleFilter(activity);
         PriceFilter priceFilter = new PriceFilter(activity);
         return titleFilter.andThen(priceFilter);
-    }
-
-    public void saveAll(List<Activity> activities) {
-        activityRepository.saveAll(activities);
     }
 }
