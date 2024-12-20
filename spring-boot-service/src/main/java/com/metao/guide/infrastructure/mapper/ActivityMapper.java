@@ -2,9 +2,11 @@ package com.metao.guide.infrastructure.mapper;
 
 import com.metao.guide.domain.Activity;
 import com.metao.guide.presentation.dto.ActivityDto;
+import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+@UtilityClass
 public class ActivityMapper {
 
     public static List<ActivityDto> mapToDto(List<Activity> activities) {
@@ -22,5 +24,15 @@ public class ActivityMapper {
                         activity.getSupplier().getAddress()
                 ))
                 .toList();
+    }
+
+    public static List<Activity> mapToEntity(ActivityDto activityDto) {
+        return List.of(Activity.builder()
+                .title(activityDto.title())
+                .price(activityDto.price())
+                .currency(activityDto.currency())
+                .rating(activityDto.rating())
+                .specialOffer(activityDto.specialOffer())
+                .build());
     }
 }
