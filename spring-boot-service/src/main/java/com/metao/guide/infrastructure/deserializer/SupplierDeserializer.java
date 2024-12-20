@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class SupplierDeserializer extends StdDeserializer<Supplier> {
-    private final Map<Long, Supplier> supplierMap;
+    private final transient Map<Long, Supplier> supplierMap;
 
     public SupplierDeserializer(Map<Long, Supplier> supplierMap) {
         super(Supplier.class);

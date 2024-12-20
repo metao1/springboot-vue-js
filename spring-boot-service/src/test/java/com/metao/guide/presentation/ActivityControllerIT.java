@@ -1,13 +1,10 @@
 package com.metao.guide.presentation;
 
-import com.metao.guide.application.Supplier;
-import com.metao.guide.domain.Activity;
 import com.metao.guide.domain.service.ActivityService;
 import com.metao.guide.infrastructure.mapper.ActivityMapper;
 import com.metao.guide.presentation.dto.ActivityDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

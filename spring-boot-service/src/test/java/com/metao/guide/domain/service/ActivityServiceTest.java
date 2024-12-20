@@ -1,6 +1,5 @@
 package com.metao.guide.domain.service;
 
-import com.metao.guide.application.filter.Filter;
 import com.metao.guide.application.filter.TitleFilter;
 import com.metao.guide.domain.Activity;
 import com.metao.guide.infrastructure.repository.ActivityRepository;

@@ -1,10 +1,8 @@
 package com.metao.guide.application.filter;
 
-import com.metao.guide.domain.Activity;
 import lombok.Getter;
 
 import java.util.Objects;
-
 
 /**
  * This abstract class represents a filter that can be applied to a collection of entities.
@@ -21,12 +19,12 @@ public abstract class Filter<T> {
     private final T value;
     private Filter<T> andThen;
 
-    public Filter<T> andThen(Filter<T> andThen) {
+    public final Filter<T> andThen(Filter<T> andThen) {
         this.andThen = andThen;
         return this;
     }
 
-    public Filter(String key, T value) {
+    protected Filter(String key, T value) {
         this.key = key;
         this.value = value;
     }

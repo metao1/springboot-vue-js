@@ -53,12 +53,6 @@ class FilterTest {
             Filter<String> filter = new StringFilter("title", "Spring");
             assertTrue(filter.matches("Spring"));
         }
-
-        @Test
-        void testStringFilterNoMatch() {
-            Filter<String> filter = new StringFilter("title", "Spring");
-            assertTrue(filter.matches("Spring"));
-        }
     }
 
     @Nested

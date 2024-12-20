@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TitleFilterTest {
@@ -30,15 +29,10 @@ class TitleFilterTest {
         TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern web application").build());
         assertFalse(filter.matches(null));
     }
+
     void testTitleFilterHandlesSpecialCharactersInTitle() {
         TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern-web application!").build());
         assertTrue(filter.matches(Activity.builder().title("Build a modern-web application!").build()));
-    }
-
-    @Test
-    void testTitleFilterDoesNotMatchWhenActivityIsNull() {
-        TitleFilter filter = new TitleFilter(Activity.builder().title("Build a modern web application").build());
-        assertFalse(filter.matches(null));
     }
 
     @Test

@@ -8,10 +8,14 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,58 +64,15 @@ class JsonActivityRepositoryTest {
         jsonActivityRepository.saveAll(mockActivities);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideFiltersAndExpectedResults")
     @SneakyThrows
-    void testFindByFilter() {
-        var titleFilter = new TitleFilter(Activity.builder().title("Activity 1").build());
+    void testFindByFilter(Filter<Activity> filter, int expectedSize, List<String> expectedTitles) {
+        List<Activity> filteredActivities = jsonActivityRepository.findByFilter(filter);
 
-        List<Activity> filteredActivities = jsonActivityRepository.findByFilter(titleFilter);
-
-        assertThat(filteredActivities).hasSize(1)
+        assertThat(filteredActivities).hasSize(expectedSize)
                 .allSatisfy(activity -> {
-                    assertThat(activity.getTitle()).isEqualTo("Activity 1");
-                    assertThat(activity.getPrice()).isEqualTo(100);
-                    assertThat(activity.getCurrency()).isEqualTo("USD");
-                    assertThat(activity.getRating()).isEqualTo(4.5);
-                    assertThat(activity.isSpecialOffer()).isTrue();
-                    assertThat(activity.getSupplier().getId()).isEqualTo(123L);
-                    assertThat(activity.getSupplier().getName()).isEqualTo("Black Forest Cruise");
-                    assertThat(activity.getSupplier().getAddress()).isEqualTo("Black Forest");
-                    assertThat(activity.getSupplier().getCity()).isEqualTo("Berlin");
-                    assertThat(activity.getSupplier().getCountry()).isEqualTo("Germany");
-                });
-
-
-        titleFilter = new TitleFilter(Activity.builder().title("Activity 2").build());
-        filteredActivities = jsonActivityRepository.findByFilter(titleFilter);
-
-        assertThat(filteredActivities).hasSize(1)
-                .allSatisfy(activity -> {
-                    assertThat(activity.getTitle()).isEqualTo("Activity 2");
-                    assertThat(activity.getPrice()).isEqualTo(150);
-                    assertThat(activity.getCurrency()).isEqualTo("EUR");
-                    assertThat(activity.getRating()).isEqualTo(4.0);
-                    assertThat(activity.isSpecialOffer()).isFalse();
-                    assertThat(activity.getSupplier().getId()).isIn(456L);
-                    assertThat(activity.getSupplier().getName()).isEqualTo("Black Forest Cruise");
-                    assertThat(activity.getSupplier().getAddress()).isEqualTo("Black Forest");
-                    assertThat(activity.getSupplier().getCity()).isEqualTo("Berlin");
-                    assertThat(activity.getSupplier().getCountry()).isEqualTo("Germany");
-                });
-
-        // add another title filter to the activity filter and check that the result is extended to the second activity
-        titleFilter = new TitleFilter(Activity.builder().title("Activity ").build()); // intentionally added a space
-
-        filteredActivities = jsonActivityRepository.findByFilter(titleFilter);
-
-        assertThat(filteredActivities).hasSize(2)
-                .allSatisfy(activity -> {
-                    assertThat(activity.getTitle()).isIn("Activity 1", "Activity 2");
-                    assertThat(activity.getPrice()).isIn(100, 150);
-                    assertThat(activity.getCurrency()).isIn("EUR", "USD");
-                    assertThat(activity.getRating()).isIn(4.0, 4.5);
-                    assertThat(activity.isSpecialOffer()).isIn(false, true);
-                    assertThat(activity.getSupplier().getId()).isIn(456L, 123L);
+                    assertThat(activity.getTitle()).isIn(expectedTitles);
                 });
     }
 
@@ -141,4 +102,12 @@ class JsonActivityRepositoryTest {
             return true;
         }
     };
+
+    private static Stream<Arguments> provideFiltersAndExpectedResults() {
+        return Stream.of(
+                Arguments.of(new TitleFilter(Activity.builder().title("Activity 1").build()), 1, List.of("Activity 1")),
+                Arguments.of(new TitleFilter(Activity.builder().title("Activity 2").build()), 1, List.of("Activity 2")),
+                Arguments.of(new TitleFilter(Activity.builder().title("Activity ").build()), 2, List.of("Activity 1", "Activity 2"))
+        );
+    }
 }

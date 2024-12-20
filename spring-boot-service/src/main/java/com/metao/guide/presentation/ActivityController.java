@@ -30,7 +30,7 @@ public class ActivityController {
 
     @GetMapping("/debug")
     public void debug(@RequestParam(name = "title", required = false) String title,
-                      @RequestParam(name = "price", required = false) int price,
+                      @RequestParam(name = "price", required = false) Integer price,
                       Model model) {
         model.addAttribute("title", title);
         model.addAttribute("price", price);

@@ -54,8 +54,7 @@ public class JsonActivityRepository implements ActivityRepository {
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Supplier.class, supplierDeserializer);
             objectMapper.registerModule(module);
-            List<Activity> activities = readFromResources("static/activities.json", Activity.class);
-            saveAll(activities);
+            saveAll(readFromResources("static/activities.json", Activity.class));
         }
     }
 
